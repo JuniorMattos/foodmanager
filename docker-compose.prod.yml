@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: foodmanager-postgres-prod
+    environment:
+      POSTGRES_DB: foodmanager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: foodmanager-redis-prod
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: foodmanager-backend-prod
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/foodmanager
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: foodmanager-frontend-prod
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+      VITE_NODE_ENV: production
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: foodmanager-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+volumes:
+  postgres_data:
+
+networks:
+  foodmanager-network:
+    driver: bridge

@@ -1,0 +1,450 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")     // ← Prisma Accelerate URL
+  directUrl = env("DIRECT_URL")       // ← Supabase Direct URL
+}
+
+// Multi-tenant model
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  logoUrl     String?  @map("logo_url")
+  address     String?
+  phone       String?
+  email       String?
+  deliveryFee Decimal? @map("delivery_fee") @db.Decimal(10, 2)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users       User[]
+  categories  Category[]
+  products    Product[]
+  inventory   InventoryItem[]
+  orders      Order[]
+  financials  FinancialRecord[]
+  invoices    Invoice[]
+
+  @@map("tenants")
+}
+
+// User model with roles
+model User {
+  id        String   @id @default(cuid())
+  email     String
+  name      String?
+  password  String
+  role      UserRole
+  tenantId  String   @map("tenant_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orders    Order[]
+
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  VENDOR
+  CUSTOMER
+}
+
+// Product categories
+model Category {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  description String?
+  orderIndex  Int      @default(0) @map("order_index")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@unique([tenantId, name])
+  @@map("categories")
+}
+
+// Products/Menu items
+model Product {
+  id            String   @id @default(cuid())
+  tenantId      String   @map("tenant_id")
+  categoryId    String   @map("category_id")
+  name          String
+  description   String?
+  price         Decimal  @db.Decimal(10, 2)
+  imageUrl      String?  @map("image_url")
+  isAvailable   Boolean  @default(true) @map("is_available")
+  orderIndex    Int      @default(0) @map("order_index")
+  preparationTime Int?   @map("preparation_time") // in minutes
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant        Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category      Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  customizations ProductCustomization[]
+  orderItems    OrderItem[]
+
+  @@unique([tenantId, name])
+  @@map("products")
+}
+
+// Product customizations (add/remove ingredients)
+model ProductCustomization {
+  id          String   @id @default(cuid())
+  productId   String   @map("product_id")
+  name        String
+  type        CustomizationType
+  price       Decimal  @default(0) @db.Decimal(10, 2)
+  isAvailable Boolean  @default(true) @map("is_available")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  product           Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItemCustoms  OrderItemCustomization[]
+
+  @@map("product_customizations")
+}
+
+enum CustomizationType {
+  ADDITION
+  REMOVAL
+}
+
+// Inventory management
+model InventoryItem {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  description String?
+  quantity    Decimal  @db.Decimal(10, 2)
+  minQuantity Decimal  @default(0) @db.Decimal(10, 2) @map("min_quantity")
+  unit        String   @default("un") // un, kg, l, etc.
+  cost        Decimal? @db.Decimal(10, 2)
+  supplier    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  movements InventoryMovement[]
+
+  @@unique([tenantId, name])
+  @@map("inventory_items")
+}
+
+// Inventory movements
+model InventoryMovement {
+  id           String           @id @default(cuid())
+  inventoryId  String           @map("inventory_id")
+  type         MovementType
+  quantity     Decimal          @db.Decimal(10, 2)
+  reason       String
+  cost         Decimal?         @db.Decimal(10, 2)
+  orderId      String?          @map("order_id")
+  userId       String?          @map("user_id")
+  createdAt    DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  inventory InventoryItem @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  order     Order?         @relation(fields: [orderId], references: [id])
+  user      User?          @relation(fields: [userId], references: [id])
+
+  @@map("inventory_movements")
+}
+
+enum MovementType {
+  IN
+  OUT
+  ADJUSTMENT
+  WASTE
+  RETURN
+}
+
+// Orders
+model Order {
+  id              String      @id @default(cuid())
+  tenantId        String      @map("tenant_id")
+  orderNumber     String      @unique @map("order_number")
+  customerName    String?     @map("customer_name")
+  customerPhone   String?     @map("customer_phone")
+  customerAddress String?     @map("customer_address")
+  deliveryType    DeliveryType @map("delivery_type")
+  status          OrderStatus @default(PENDING)
+  totalAmount     Decimal     @db.Decimal(10, 2) @map("total_amount")
+  deliveryFee     Decimal?    @db.Decimal(10, 2) @map("delivery_fee")
+  subtotal        Decimal     @db.Decimal(10, 2)
+  discount        Decimal?    @db.Decimal(10, 2)
+  notes           String?
+  estimatedTime   Int?        @map("estimated_time") // in minutes
+  actualTime      Int?        @map("actual_time") // in minutes
+  userId          String?     @map("user_id") // who created the order
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user       User?               @relation(fields: [userId], references: [id])
+  items      OrderItem[]
+  payments   Payment[]
+  movements  InventoryMovement[]
+  invoices   Invoice[]
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum DeliveryType {
+  PICKUP
+  DELIVERY
+}
+
+// Order items
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String   @map("order_id")
+  productId String   @map("product_id")
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 2) @map("unit_price")
+  totalPrice Decimal @db.Decimal(10, 2) @map("total_price")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  order         Order                    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product                  @relation(fields: [productId], references: [id])
+  customizations OrderItemCustomization[]
+
+  @@map("order_items")
+}
+
+// Order item customizations (junction table)
+model OrderItemCustomization {
+  id               String   @id @default(cuid())
+  orderItemId      String   @map("order_item_id")
+  customizationId String   @map("customization_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Relations
+  orderItem      OrderItem            @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  customization  ProductCustomization @relation(fields: [customizationId], references: [id])
+
+  @@unique([orderItemId, customizationId])
+  @@map("order_item_customizations")
+}
+
+// Payments
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String        @map("order_id")
+  method    PaymentMethod
+  amount    Decimal       @db.Decimal(10, 2)
+  status    PaymentStatus @default(PENDING)
+  transactionId String?    @map("transaction_id")
+  pixQrCode String?       @map("pix_qr_code")
+  pixCode   String?       @map("pix_code")
+  cardInfo  Json?         @map("card_info") // encrypted card data
+  changeAmount Decimal?   @map("change_amount")
+  notes     String?
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+  MEAL_VOUCHER
+  FOOD_VOUCHER
+  CREDIT_CARD_INSTALLMENT
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+// Financial records
+model FinancialRecord {
+  id          String      @id @default(cuid())
+  tenantId    String      @map("tenant_id")
+  type        RecordType
+  description String
+  amount      Decimal     @db.Decimal(10, 2)
+  category    String
+  date        DateTime    @db.Date
+  orderId     String?     @map("order_id")
+  invoiceId   String?     @map("invoice_id")
+  attachments Json?       // file URLs
+  notes       String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order   Order?   @relation(fields: [orderId], references: [id])
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@map("financial_records")
+}
+
+enum RecordType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+  TRANSFER
+}
+
+// Fiscal invoices (NFS-e, SAT, NFC-e)
+model Invoice {
+  id          String      @id @default(cuid())
+  tenantId    String      @map("tenant_id")
+  orderId     String      @map("order_id")
+  type        InvoiceType
+  number      String
+  series      String?
+  status      InvoiceStatus @default(PENDING)
+  xmlUrl      String?     @map("xml_url")
+  pdfUrl      String?     @map("pdf_url")
+  qrCode      String?     @map("qr_code")
+  issuedAt    DateTime?   @map("issued_at")
+  cancelledAt DateTime?   @map("cancelled_at")
+  error       String?     // error message if failed
+  metadata    Json?       // additional fiscal data
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order      Order            @relation(fields: [orderId], references: [id])
+  financials FinancialRecord[]
+
+  @@unique([tenantId, type, number])
+  @@map("invoices")
+}
+
+enum InvoiceType {
+  NFSE  // Nota Fiscal de Serviço Eletrônica
+  SAT   // Sistema Autenticador e Transmissor
+  NFC   // Nota Fiscal ao Consumidor
+}
+
+enum InvoiceStatus {
+  PENDING
+  ISSUED
+  CANCELLED
+  ERROR
+}
+
+// Sessions for authentication
+model Session {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  token        String   @unique
+  refreshToken String   @unique @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  isActive     Boolean  @default(true) @map("is_active")
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("sessions")
+}
+
+// System settings per tenant
+model Setting {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  key       String
+  value     Json
+  isPublic  Boolean  @default(false) @map("is_public") // can be accessed by customers
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, key])
+  @@map("settings")
+}
+
+// Audit log
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  userId    String?  @map("user_id")
+  action    String
+  entity    String   // table name
+  entityId  String   @map("entity_id")
+  oldValues Json?    @map("old_values")
+  newValues Json?    @map("new_values")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+// Notifications
+model Notification {
+  id        String           @id @default(cuid())
+  tenantId  String           @map("tenant_id")
+  userId    String?          @map("user_id")
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean          @default(false) @map("is_read")
+  data      Json?            // additional data
+  expiresAt DateTime?        @map("expires_at")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_UPDATED
+  ORDER_CANCELLED
+  INVENTORY_LOW
+  PAYMENT_RECEIVED
+  SYSTEM_ALERT
+  MAINTENANCE
+}

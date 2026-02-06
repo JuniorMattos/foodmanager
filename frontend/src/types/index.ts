@@ -90,6 +90,16 @@ export interface CustomerInfo {
   address?: string
 }
 
+export interface ProductQuery {
+  page?: number
+  limit?: number
+  search?: string
+  categoryId?: string
+  isAvailable?: boolean
+  sortBy?: 'name' | 'price' | 'orderIndex' | 'createdAt'
+  sortOrder?: 'asc' | 'desc'
+}
+
 export interface ApiResponse<T = any> {
   data?: T
   error?: string

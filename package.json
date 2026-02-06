@@ -1,1 +1,68 @@
-{"name":"foodmanager","version":"1.0.0","description":"Sistema completo multi-tenant para gestão de estabelecimentos alimentícios","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint","type-check":"tsc --noEmit"},"dependencies":{"@hookform/resolvers":"^3.3.2","@radix-ui/react-dialog":"^1.0.5","@radix-ui/react-dropdown-menu":"^2.0.6","@radix-ui/react-select":"^2.0.0","@radix-ui/react-slot":"^1.0.2","@radix-ui/react-tabs":"^1.0.4","@radix-ui/react-toast":"^1.1.5","@supabase/auth-helpers-nextjs":"^0.8.7","@supabase/supabase-js":"^2.38.5","class-variance-authority":"^0.7.0","clsx":"^2.0.0","date-fns":"^2.30.0","lucide-react":"^0.294.0","next":"14.2.35","react":"^18.2.0","react-dom":"^18.2.0","react-hook-form":"^7.48.2","react-hot-toast":"^2.4.1","recharts":"^2.8.0","tailwind-merge":"^2.2.0","zod":"^3.22.4"},"devDependencies":{"@types/node":"^20.10.5","@types/react":"^18.2.45","@types/react-dom":"^18.2.18","autoprefixer":"^10.4.16","eslint":"^8.56.0","eslint-config-next":"14.2.35","postcss":"^8.4.32","tailwindcss":"^3.3.6","tailwindcss-animate":"^1.0.7","typescript":"^5.3.3"}}
+{
+  "name": "foodmanager",
+  "version": "1.0.0",
+  "description": "Plataforma SaaS multi-tenant para gestão de restaurantes",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "setup:windows": "scripts\\setup.bat",
+    "setup:unix": "chmod +x scripts/setup.sh && ./scripts/setup.sh",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "npm run start:backend",
+    "start:backend": "cd backend && npm start",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "docker:dev": "docker-compose up -d",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:stop": "docker-compose down",
+    "docker:clean": "docker-compose down -v --remove-orphans",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:generate": "cd backend && npx prisma generate",
+    "db:seed": "cd backend && npx prisma db seed",
+    "db:reset": "cd backend && npx prisma migrate reset"
+  },
+  "keywords": [
+    "saas",
+    "multi-tenant",
+    "restaurant",
+    "food",
+    "delivery",
+    "pos",
+    "management",
+    "react",
+    "typescript",
+    "fastify",
+    "prisma"
+  ],
+  "author": "FoodManager Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/foodmanager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/foodmanager/issues"
+  },
+  "homepage": "https://github.com/seu-usuario/foodmanager#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

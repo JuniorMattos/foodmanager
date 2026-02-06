@@ -30,7 +30,7 @@ export default function ProductGrid({
     .filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesCategory = selectedCategory === 'all' || product.categoryId === selectedCategory
+      const matchesCategory = selectedCategory === 'all' || product.category_id === selectedCategory
       return matchesSearch && matchesCategory
     })
     .sort((a, b) => {
@@ -160,12 +160,12 @@ function ProductCard({
   const [imageError, setImageError] = useState(false)
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border ${product.isAvailable ? 'border-gray-200' : 'border-red-200'} overflow-hidden hover:shadow-md transition-shadow`}>
+    <div className={`bg-white rounded-lg shadow-sm border ${product.is_available ? 'border-gray-200' : 'border-red-200'} overflow-hidden hover:shadow-md transition-shadow`}>
       {/* Product Image */}
       <div className="relative h-48 bg-gray-100">
-        {product.imageUrl && !imageError ? (
+        {product.image_url && !imageError ? (
           <img
-            src={product.imageUrl}
+            src={product.image_url}
             alt={product.name}
             className="w-full h-full object-cover"
             onError={() => setImageError(true)}
@@ -182,7 +182,7 @@ function ProductCard({
         )}
         
         {/* Availability Badge */}
-        {!product.isAvailable && (
+        {!product.is_available && (
           <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
             Indisponível
           </div>
@@ -201,9 +201,9 @@ function ProductCard({
             <button
               onClick={onToggleAvailability}
               className={`p-1.5 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors ${
-                product.isAvailable ? 'text-green-600' : 'text-red-600'
+                product.is_available ? 'text-green-600' : 'text-red-600'
               }`}
-              title={product.isAvailable ? 'Desativar' : 'Ativar'}
+              title={product.is_available ? 'Desativar' : 'Ativar'}
             >
               <Power className="w-4 h-4" />
             </button>
@@ -222,15 +222,15 @@ function ProductCard({
           <span className="text-lg font-bold text-orange-600">
             R$ {product.price.toFixed(2)}
           </span>
-          {product.preparationTime && (
+          {product.preparation_time && (
             <span className="text-xs text-gray-500">
-              ⏱️ {product.preparationTime}min
+              ⏱️ {product.preparation_time}min
             </span>
           )}
         </div>
 
         {/* Quantity and Add to Cart */}
-        {product.isAvailable && userRole !== 'CUSTOMER' && (
+        {product.is_available && userRole !== 'CUSTOMER' && (
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-2">
               <button
@@ -259,7 +259,7 @@ function ProductCard({
         )}
 
         {/* Customer View - Simple Add to Cart */}
-        {product.isAvailable && userRole === 'CUSTOMER' && (
+        {product.is_available && userRole === 'CUSTOMER' && (
           <button
             onClick={onAddToCart}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
@@ -269,7 +269,7 @@ function ProductCard({
         )}
 
         {/* Unavailable Message */}
-        {!product.isAvailable && (
+        {!product.is_available && (
           <div className="text-center text-sm text-red-600 font-medium">
             Produto indisponível no momento
           </div>

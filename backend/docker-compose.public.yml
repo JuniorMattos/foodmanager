@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  foodmanager-public-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - PORT=3003
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/foodmanager
+      - CORS_ORIGIN=*
+      - LOG_LEVEL=info
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=foodmanager
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - foodmanager-public-api
+    restart: unless-stopped
+    networks:
+      - foodmanager-network
+
+volumes:
+  postgres_data:
+
+networks:
+  foodmanager-network:
+    driver: bridge

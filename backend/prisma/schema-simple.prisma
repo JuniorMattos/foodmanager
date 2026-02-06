@@ -1,0 +1,55 @@
+// Schema simplificado para teste rápido de login
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")     // ← Prisma Accelerate URL
+  directUrl = env("DIRECT_URL")       // ← Supabase Direct URL
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users User[]
+
+  @@map("tenants")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String
+  name      String?
+  password  String
+  role      String   // ADMIN, MANAGER, VENDOR, CUSTOMER
+  tenantId  String   @map("tenant_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  token        String   @unique
+  refreshToken String   @unique @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  isActive     Boolean  @default(true) @map("is_active")
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("sessions")
+}

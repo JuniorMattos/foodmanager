@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:validators": "jest tests/validators",
+    "test:services": "jest tests/services",
+    "test:integration": "jest tests/integration",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
+  }
+}

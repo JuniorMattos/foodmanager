@@ -6,8 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
 }
 
 // Multi-tenant model
@@ -51,6 +50,7 @@ model User {
   // Relations
   tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   orders    Order[]
+  movements InventoryMovement[]
 
   @@unique([email, tenantId])
   @@map("users")
@@ -146,6 +146,7 @@ model InventoryItem {
 
   // Relations
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  movements InventoryMovement[]
 
   @@unique([tenantId, name])
   @@map("inventory_items")
@@ -207,6 +208,7 @@ model Order {
   payments   Payment[]
   movements  InventoryMovement[]
   invoices   Invoice[]
+  financials FinancialRecord[]
 
   @@map("orders")
 }

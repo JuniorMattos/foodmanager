@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Search, Filter, ArrowUpDown, Plus, Minus, ShoppingCart, MapPin, Clock, Star } from 'lucide-react'
+import { Search, Filter, ArrowUpDown, Plus, Minus, ShoppingCart, MapPin, Clock, Star, ArrowLeft, Home } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
+import { useTenantTheme } from '@/hooks/useTenantTheme'
+import { BrandingHeader } from '@/components/tenant/BrandingHeader'
 import { Product, Category, CartItem, CustomerInfo } from '@/types'
 
 export default function MenuPage() {
+  const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuthStore()
+  const { branding } = useTenantTheme()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
@@ -15,6 +22,27 @@ export default function MenuPage() {
   const [showCart, setShowCart] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  // Função para navegação segura
+  const handleGoBack = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, voltar para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, voltar para o login
+      navigate('/login')
+    }
+  }
+
+  const handleGoHome = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, ir para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, ir para o login
+      navigate('/login')
+    }
+  }
 
   // Mock data
   useEffect(() => {
@@ -260,35 +288,9 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">🍔</span>
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">Burger Express</h1>
-                <p className="text-xs text-gray-500">⭐ 4.8 (500+ avaliações) • 🕐 11-23h</p>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => setShowCart(true)}
-              className="relative p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {getTotalItems()}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background-color)' }}>
+      {/* Header com Branding */}
+      <BrandingHeader />
 
       {/* Search and Filter Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
@@ -516,6 +518,29 @@ function CartSidebar({
   totalPrice,
   finalTotal
 }: CartSidebarProps) {
+  const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuthStore()
+
+  // Função para navegação segura
+  const handleGoBack = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, voltar para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, voltar para o login
+      navigate('/login')
+    }
+  }
+
+  const handleGoHome = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, ir para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, ir para o login
+      navigate('/login')
+    }
+  }
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
@@ -523,9 +548,28 @@ function CartSidebar({
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Carrinho</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              ✕
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Links de Navegação no Carrinho */}
+              <button 
+                onClick={handleGoBack}
+                className="text-sm text-blue-600 hover:text-blue-500 flex items-center gap-1"
+                title={isAuthenticated ? "Voltar ao Dashboard" : "Voltar ao Login"}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {isAuthenticated ? 'Dashboard' : 'Login'}
+              </button>
+              <button 
+                onClick={handleGoHome}
+                className="text-sm text-blue-600 hover:text-blue-500 flex items-center gap-1"
+                title={isAuthenticated ? "Dashboard" : "Login"}
+              >
+                <Home className="w-4 h-4" />
+                {isAuthenticated ? 'Home' : 'Login'}
+              </button>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                ✕
+              </button>
+            </div>
           </div>
         </div>
 
@@ -674,7 +718,30 @@ function CheckoutModal({
   onClose,
   onConfirm
 }: CheckoutModalProps) {
+  const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuthStore()
   const [selectedPayment, setSelectedPayment] = useState('pix')
+
+  // Função para navegação segura
+  const handleGoBack = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, voltar para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, voltar para o login
+      navigate('/login')
+    }
+  }
+
+  const handleGoHome = () => {
+    if (isAuthenticated && user) {
+      // Se estiver autenticado, ir para o dashboard
+      navigate('/')
+    } else {
+      // Se não estiver autenticado, ir para o login
+      navigate('/login')
+    }
+  }
 
   const paymentMethods = [
     { id: 'pix', name: 'PIX', icon: '📱' },
@@ -770,6 +837,24 @@ function CheckoutModal({
               className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg"
             >
               Confirmar Pedido
+            </button>
+          </div>
+          
+          {/* Links de Navegação */}
+          <div className="flex justify-center gap-4 mt-4 pt-4 border-t">
+            <button 
+              onClick={handleGoBack}
+              className="text-sm text-blue-600 hover:text-blue-500 flex items-center gap-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {isAuthenticated ? 'Voltar ao Dashboard' : 'Voltar ao Login'}
+            </button>
+            <button 
+              onClick={handleGoHome}
+              className="text-sm text-blue-600 hover:text-blue-500 flex items-center gap-1"
+            >
+              <Home className="w-4 h-4" />
+              {isAuthenticated ? 'Dashboard' : 'Login'}
             </button>
           </div>
         </div>

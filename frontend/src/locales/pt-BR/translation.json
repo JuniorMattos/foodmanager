@@ -1,0 +1,212 @@
+{
+  "common": {
+    "search": "Buscar...",
+    "settings": "Configurações",
+    "profile": "Perfil",
+    "logout": "Sair",
+    "language": "Idioma",
+    "overview": "Visão geral",
+    "refresh": "Atualizar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "status": "Status",
+    "users": "Usuários",
+    "actions": "Ações",
+    "view": "Visualizar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "activate": "Ativar",
+    "deactivate": "Desativar"
+  },
+  "adminDashboard": {
+    "subtitle": "Gerencie todos os tenants da plataforma",
+    "newTenant": "Novo Tenant",
+    "searchPlaceholder": "Buscar tenants...",
+    "stats": {
+      "totalTenants": "Total Tenants",
+      "activeTenants": "Tenants Ativos",
+      "totalUsers": "Total Usuários",
+      "totalRevenue": "Receita Total"
+    },
+    "filters": {
+      "allStatus": "Todos Status",
+      "active": "Ativos",
+      "inactive": "Inativos",
+      "createdAt": "Data Criação",
+      "name": "Nome",
+      "users": "Usuários",
+      "revenue": "Receita",
+      "newest": "Mais Recentes",
+      "oldest": "Mais Antigos"
+    },
+    "table": {
+      "tenant": "Tenant",
+      "orders": "Pedidos",
+      "revenue": "Receita",
+      "lastActivity": "Última Atividade"
+    },
+    "empty": {
+      "title": "Nenhum tenant encontrado",
+      "description": "Tente ajustar os filtros ou criar um novo tenant."
+    }
+  },
+  "settingsPage": {
+    "title": "Configurações",
+    "subtitle": "Gerencie suas preferências e configurações da conta",
+    "sections": {
+      "profile": "Perfil",
+      "notifications": "Notificações",
+      "security": "Segurança",
+      "preferences": "Preferências"
+    },
+    "profile": {
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefone",
+      "namePlaceholder": "Seu nome",
+      "emailPlaceholder": "seu@email.com",
+      "phonePlaceholder": "(00) 00000-0000"
+    },
+    "notifications": {
+      "email": "Notificações por email",
+      "orders": "Notificações de pedidos",
+      "newsletter": "Newsletter"
+    },
+    "security": {
+      "currentPassword": "Senha atual",
+      "newPassword": "Nova senha",
+      "confirmNewPassword": "Confirmar nova senha",
+      "newPasswordPlaceholder": "Nova senha",
+      "confirmNewPasswordPlaceholder": "Confirmar nova senha"
+    },
+    "preferences": {
+      "language": "Idioma",
+      "timezone": "Fuso horário",
+      "darkMode": "Modo escuro",
+      "languagePt": "Português (Brasil)",
+      "languageEn": "English"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "save": "Salvar Configurações"
+    }
+  },
+  "createTenantModal": {
+    "title": "Criar Novo Tenant",
+    "sections": {
+      "basicInfo": "Informações Básicas",
+      "adminUser": "Usuário Administrador",
+      "visualTheme": "Tema Visual",
+      "settings": "Configurações"
+    },
+    "fields": {
+      "tenantName": "Nome do Tenant",
+      "slug": "Slug",
+      "email": "Email",
+      "phone": "Telefone",
+      "plan": "Plano",
+      "name": "Nome",
+      "password": "Senha",
+      "tagline": "Slogan",
+      "primaryColor": "Cor Primária",
+      "secondaryColor": "Cor Secundária",
+      "buttonStyle": "Estilo de Botão",
+      "currency": "Moeda",
+      "language": "Idioma",
+      "minOrderAmount": "Valor Mínimo do Pedido"
+    },
+    "placeholders": {
+      "companyName": "Nome da empresa",
+      "slug": "nome-da-empresa",
+      "email": "contato@empresa.com",
+      "phone": "(00) 00000-0000",
+      "adminName": "Nome do admin",
+      "adminEmail": "admin@empresa.com",
+      "securePassword": "Senha segura",
+      "tagline": "Slogan da empresa"
+    },
+    "plan": {
+      "basic": "Básico",
+      "premium": "Premium",
+      "enterprise": "Enterprise"
+    },
+    "actions": {
+      "uploadLogo": "Upload Logo",
+      "creating": "Criando...",
+      "create": "Criar Tenant"
+    },
+    "buttonStyle": {
+      "rounded": "Arredondado",
+      "square": "Quadrado",
+      "pill": "Pílula"
+    },
+    "currency": {
+      "brl": "Real (BRL)",
+      "usd": "Dólar (USD)",
+      "eur": "Euro (EUR)"
+    },
+    "language": {
+      "ptBR": "Português (Brasil)",
+      "enUS": "English (US)",
+      "esES": "Español"
+    }
+  },
+  "roleManagement": {
+    "title": "Gerenciamento de Perfis",
+    "subtitle": "Gerencie perfis de acesso e permissões",
+    "overviewSubtitle": "Visão geral de perfis, permissões e atribuições",
+    "manageRoles": "Gerenciar Perfis",
+    "createRole": "Criar Perfil",
+    "searchRoles": "Buscar perfis...",
+    "showSystemRoles": "Mostrar Perfis do Sistema",
+    "noRolesFound": "Nenhum perfil encontrado",
+    "role": "Perfil",
+    "description": "Descrição",
+    "permissions": "Permissões",
+    "users": "Usuários",
+    "status": "Status",
+    "actions": "Ações",
+    "system": "Sistema",
+    "unused": "Sem uso",
+    "active": "Ativo",
+    "createNewRole": "Criar novo perfil",
+    "assignRolesToUsers": "Atribuir perfis a usuários",
+    "reviewPermissions": "Revisar permissões",
+    "stats": {
+      "totalRoles": "Total de Perfis",
+      "activeRoles": "Perfis Ativos",
+      "totalUsers": "Total de Usuários",
+      "unassignedUsers": "Usuários sem Perfil",
+      "needRoleAssignment": "Precisam de atribuição",
+      "systemAndCustom": "{{system}} do sistema, {{custom}} customizados",
+      "unused": "{{count}} sem uso",
+      "withRoles": "{{count}} com perfis"
+    },
+    "charts": {
+      "roleDistribution": "Distribuição de Perfis",
+      "permissionUsage": "Uso de Permissões"
+    },
+    "recentActivity": "Atividade Recente",
+    "quickActions": "Ações Rápidas",
+    "modals": {
+      "createTitle": "Criar Novo Perfil",
+      "editTitle": "Editar Perfil",
+      "cloneTitle": "Clonar Perfil",
+      "deleteTitle": "Excluir Perfil",
+      "roleName": "Nome do Perfil",
+      "newRoleName": "Nome do Novo Perfil",
+      "permissions": "Permissões",
+      "create": "Criar Perfil",
+      "update": "Atualizar Perfil",
+      "clone": "Clonar Perfil",
+      "delete": "Excluir Perfil",
+      "placeholderName": "Ex: Gerente de Vendas",
+      "placeholderDescription": "Descreva o perfil e seu objetivo",
+      "warning": "Atenção",
+      "deleteConfirm": "Tem certeza que deseja excluir o perfil \"{{name}}\"?",
+      "roleAssignedToUsers": "Este perfil está atribuído a {{count}} usuários. Reatribua esses usuários antes de excluir.",
+      "cloneInfo": "Isso criará um novo perfil com as mesmas permissões de \"{{name}}\".",
+      "clonePermissionCount": "O novo perfil terá {{count}} permissões."
+    }
+  }
+}

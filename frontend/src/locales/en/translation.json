@@ -1,0 +1,212 @@
+{
+  "common": {
+    "search": "Search...",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Sign out",
+    "language": "Language",
+    "overview": "Overview",
+    "refresh": "Refresh",
+    "cancel": "Cancel",
+    "save": "Save",
+    "status": "Status",
+    "users": "Users",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "adminDashboard": {
+    "subtitle": "Manage all platform tenants",
+    "newTenant": "New Tenant",
+    "searchPlaceholder": "Search tenants...",
+    "stats": {
+      "totalTenants": "Total Tenants",
+      "activeTenants": "Active Tenants",
+      "totalUsers": "Total Users",
+      "totalRevenue": "Total Revenue"
+    },
+    "filters": {
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "createdAt": "Created At",
+      "name": "Name",
+      "users": "Users",
+      "revenue": "Revenue",
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "table": {
+      "tenant": "Tenant",
+      "orders": "Orders",
+      "revenue": "Revenue",
+      "lastActivity": "Last Activity"
+    },
+    "empty": {
+      "title": "No tenants found",
+      "description": "Try adjusting filters or create a new tenant."
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and account settings",
+    "sections": {
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "security": "Security",
+      "preferences": "Preferences"
+    },
+    "profile": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "(00) 00000-0000"
+    },
+    "notifications": {
+      "email": "Email notifications",
+      "orders": "Order notifications",
+      "newsletter": "Newsletter"
+    },
+    "security": {
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "newPasswordPlaceholder": "New password",
+      "confirmNewPasswordPlaceholder": "Confirm new password"
+    },
+    "preferences": {
+      "language": "Language",
+      "timezone": "Time zone",
+      "darkMode": "Dark mode",
+      "languagePt": "Portuguese (Brazil)",
+      "languageEn": "English"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Settings"
+    }
+  },
+  "createTenantModal": {
+    "title": "Create New Tenant",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "adminUser": "Admin User",
+      "visualTheme": "Visual Theme",
+      "settings": "Settings"
+    },
+    "fields": {
+      "tenantName": "Tenant Name",
+      "slug": "Slug",
+      "email": "Email",
+      "phone": "Phone",
+      "plan": "Plan",
+      "name": "Name",
+      "password": "Password",
+      "tagline": "Tagline",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "buttonStyle": "Button Style",
+      "currency": "Currency",
+      "language": "Language",
+      "minOrderAmount": "Minimum Order Amount"
+    },
+    "placeholders": {
+      "companyName": "Company name",
+      "slug": "company-name",
+      "email": "contact@company.com",
+      "phone": "(00) 00000-0000",
+      "adminName": "Admin name",
+      "adminEmail": "admin@company.com",
+      "securePassword": "Strong password",
+      "tagline": "Company tagline"
+    },
+    "plan": {
+      "basic": "Basic",
+      "premium": "Premium",
+      "enterprise": "Enterprise"
+    },
+    "actions": {
+      "uploadLogo": "Upload Logo",
+      "creating": "Creating...",
+      "create": "Create Tenant"
+    },
+    "buttonStyle": {
+      "rounded": "Rounded",
+      "square": "Square",
+      "pill": "Pill"
+    },
+    "currency": {
+      "brl": "Brazilian Real (BRL)",
+      "usd": "US Dollar (USD)",
+      "eur": "Euro (EUR)"
+    },
+    "language": {
+      "ptBR": "Portuguese (Brazil)",
+      "enUS": "English (US)",
+      "esES": "Spanish"
+    }
+  },
+  "roleManagement": {
+    "title": "Role Management",
+    "subtitle": "Manage user roles and permissions",
+    "overviewSubtitle": "Overview of roles, permissions, and user assignments",
+    "manageRoles": "Manage Roles",
+    "createRole": "Create Role",
+    "searchRoles": "Search roles...",
+    "showSystemRoles": "Show System Roles",
+    "noRolesFound": "No roles found",
+    "role": "Role",
+    "description": "Description",
+    "permissions": "Permissions",
+    "users": "Users",
+    "status": "Status",
+    "actions": "Actions",
+    "system": "System",
+    "unused": "Unused",
+    "active": "Active",
+    "createNewRole": "Create New Role",
+    "assignRolesToUsers": "Assign Roles to Users",
+    "reviewPermissions": "Review Permissions",
+    "stats": {
+      "totalRoles": "Total Roles",
+      "activeRoles": "Active Roles",
+      "totalUsers": "Total Users",
+      "unassignedUsers": "Unassigned Users",
+      "needRoleAssignment": "Need role assignment",
+      "systemAndCustom": "{{system}} system, {{custom}} custom",
+      "unused": "{{count}} unused",
+      "withRoles": "{{count}} with roles"
+    },
+    "charts": {
+      "roleDistribution": "Role Distribution",
+      "permissionUsage": "Permission Usage"
+    },
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "modals": {
+      "createTitle": "Create New Role",
+      "editTitle": "Edit Role",
+      "cloneTitle": "Clone Role",
+      "deleteTitle": "Delete Role",
+      "roleName": "Role Name",
+      "newRoleName": "New Role Name",
+      "permissions": "Permissions",
+      "create": "Create Role",
+      "update": "Update Role",
+      "clone": "Clone Role",
+      "delete": "Delete Role",
+      "placeholderName": "e.g., Sales Manager",
+      "placeholderDescription": "Describe the role and its purpose",
+      "warning": "Warning",
+      "deleteConfirm": "Are you sure you want to delete the role \"{{name}}\"?",
+      "roleAssignedToUsers": "This role is assigned to {{count}} users. You must reassign these users before deleting.",
+      "cloneInfo": "This will create a new role with the same permissions as \"{{name}}\".",
+      "clonePermissionCount": "The new role will have {{count}} permissions."
+    }
+  }
+}

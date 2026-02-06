@@ -4,20 +4,31 @@ import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import multipart from '@fastify/multipart'
 import { PrismaClient } from '@prisma/client'
+import { FastifyInstance } from 'fastify'
+import { prisma } from './lib/prisma'
+import { authRoutes } from './routes/auth'
+import { publicRoutes } from './routes/public'
+import { adminRoutes } from './routes/admin'
+import { analyticsRoutes } from './routes/analytics'
+import { auditRoutes } from './routes/audit'
+import { roleRoutes } from './routes/role'
+import { authenticateAdmin } from './middleware/adminAuth'
+import orderRoutes from './routes/orders-simple'
+import inventoryRoutes from './routes/inventory-simple'
+import financialRoutes from './routes/financial-simple'
+import userRoutes from './routes/users-simple'
+import tenantRoutes from './routes/tenants-simple'
+
 import { Server } from 'socket.io'
 import { createServer } from 'http'
 
-import authRoutes from './routes/auth'
-import productRoutes from './routes/products'
-import orderRoutes from './routes/orders'
-import inventoryRoutes from './routes/inventory'
-import financialRoutes from './routes/financial'
-import userRoutes from './routes/users'
-import tenantRoutes from './routes/tenants'
-
 import { authMiddleware } from './middleware/auth'
-import { tenantMiddleware } from './middleware/tenant'
+import { tenantMiddleware } from './middleware/tenant-simple'
 import { errorHandler } from './middleware/errorHandler'
+
+// 🔥 TEMPORÁRIO - Valores hardcoded para teste
+process.env.JWT_SECRET = 'temp-jwt-secret-for-testing-only'
+process.env.JWT_REFRESH_SECRET = 'temp-jwt-refresh-secret-for-testing-only'
 
 const server = fastify({
   logger: {
@@ -83,9 +94,7 @@ server.register(multipart, {
 })
 
 // Database connection
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-})
+import prisma from './lib/prisma'
 
 // Make Prisma available globally
 declare module 'fastify' {
@@ -100,9 +109,15 @@ server.decorate('prisma', prisma)
 server.register(tenantMiddleware)
 server.register(authMiddleware)
 
-// Routes
+// Register routes
 server.register(authRoutes, { prefix: '/api/auth' })
-server.register(productRoutes, { prefix: '/api/products' })
+server.register(publicRoutes, { prefix: '/api/public' })
+server.register(adminRoutes, { prefix: '/api' })
+server.register(analyticsRoutes, { prefix: '/api' })
+server.register(auditRoutes, { prefix: '/api' })
+server.register(roleRoutes, { prefix: '/api' })
+
+// Simple routes (mantidos para compatibilidade)
 server.register(orderRoutes, { prefix: '/api/orders' })
 server.register(inventoryRoutes, { prefix: '/api/inventory' })
 server.register(financialRoutes, { prefix: '/api/financial' })
