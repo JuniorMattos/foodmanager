@@ -21,9 +21,13 @@ import { LazyLoad,
   LazyRoleManagementPage
 } from '@/components/LazyLoad'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { useSocket } from '@/hooks/useSocket'
 
 function App() {
   const { user, isLoading, checkAuth } = useAuthStore()
+  
+  // Initialize WebSocket connection
+  useSocket()
 
   React.useEffect(() => {
     checkAuth()

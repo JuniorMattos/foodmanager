@@ -6,8 +6,8 @@ import multipart from '@fastify/multipart'
 import { PrismaClient } from '@prisma/client'
 import { FastifyInstance } from 'fastify'
 import { prisma } from './lib/prisma'
-import { authRoutes } from './routes/auth'
-import { publicRoutes } from './routes/public'
+import authRoutes from './routes/auth'
+import publicRoutes from './routes/public'
 import { adminRoutes } from './routes/admin'
 import { analyticsRoutes } from './routes/analytics'
 import { auditRoutes } from './routes/audit'
@@ -19,8 +19,7 @@ import financialRoutes from './routes/financial-simple'
 import userRoutes from './routes/users-simple'
 import tenantRoutes from './routes/tenants-simple'
 
-import { Server } from 'socket.io'
-import { createServer } from 'http'
+import { setupSocketIO } from './lib/socket'
 
 import { authMiddleware } from './middleware/auth'
 import { tenantMiddleware } from './middleware/tenant-simple'
@@ -44,25 +43,6 @@ const server = fastify({
   },
   trustProxy: true,
 })
-
-// Create HTTP server for Socket.io
-const httpServer = createServer(server.server)
-const io = new Server(httpServer, {
-  cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-})
-
-// Make Socket.io available globally
-declare module 'fastify' {
-  interface FastifyInstance {
-    io: Server
-  }
-}
-
-server.decorate('io', io)
 
 // Register plugins
 server.register(cors, {
@@ -124,25 +104,6 @@ server.register(financialRoutes, { prefix: '/api/financial' })
 server.register(userRoutes, { prefix: '/api/users' })
 server.register(tenantRoutes, { prefix: '/api/tenants' })
 
-// Socket.io connection handling
-io.on('connection', (socket) => {
-  server.log.info(`Socket connected: ${socket.id}`)
-
-  socket.on('join-tenant', (tenantId: string) => {
-    socket.join(`tenant-${tenantId}`)
-    server.log.info(`Socket ${socket.id} joined tenant ${tenantId}`)
-  })
-
-  socket.on('leave-tenant', (tenantId: string) => {
-    socket.leave(`tenant-${tenantId}`)
-    server.log.info(`Socket ${socket.id} left tenant ${tenantId}`)
-  })
-
-  socket.on('disconnect', () => {
-    server.log.info(`Socket disconnected: ${socket.id}`)
-  })
-})
-
 // Health check
 server.get('/api/health', async (request, reply) => {
   try {
@@ -177,7 +138,6 @@ const gracefulShutdown = async (signal: string) => {
   try {
     await server.close()
     await prisma.$disconnect()
-    httpServer.close()
     server.log.info('Graceful shutdown completed')
     process.exit(0)
   } catch (error) {
@@ -195,11 +155,14 @@ const start = async () => {
     const port = parseInt(process.env.PORT || '3001', 10)
     const host = process.env.HOST || '0.0.0.0'
 
-    await httpServer.listen({ port, host })
+    // Setup Socket.io after all routes are registered
+    const io = await setupSocketIO(server)
+    server.log.info('🔌 Socket.io initialized')
+
+    await server.listen({ port, host })
     server.log.info(`🚀 Server listening on http://${host}:${port}`)
-    server.log.info(`📡 Socket.io server ready`)
-  } catch (error) {
-    server.log.error('Failed to start server:', error)
+  } catch (err) {
+    server.log.error('Error starting server:', err)
     process.exit(1)
   }
 }

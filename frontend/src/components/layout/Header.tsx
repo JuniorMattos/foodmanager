@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { SocketStatus } from '@/components/ui/SocketStatus'
 
 export function Header() {
   const { user, logout } = useAuthStore()
@@ -40,6 +41,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
+            <SocketStatus />
             <LanguageSwitcher />
             <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell className="w-5 h-5" />
